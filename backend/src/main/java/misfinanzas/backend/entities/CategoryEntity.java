@@ -7,7 +7,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.Getter;
@@ -31,4 +33,9 @@ public class CategoryEntity {
     // Relación muchos a muchos con ExpenseEntity
     @ManyToMany(mappedBy = "categories")
     private List<ExpenseEntity> expenses;
+
+    //Se agrega una relacion de muchos es a uno con user para que cada usuario tenga sus propias categorias
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false) // Cada categoría pertenece a un usuario específico
+    private UserEntity user;
 }
