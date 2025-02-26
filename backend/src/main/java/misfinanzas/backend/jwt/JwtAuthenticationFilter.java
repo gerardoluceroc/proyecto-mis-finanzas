@@ -34,7 +34,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter  {
             }
         
             private String getTokenFromRequest(HttpServletRequest request) {
-                // TODO Auto-generated method stub
+
                 final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 
                 // Este encabezado o string al que vamos a acceder va a comenzar con la palabra "Bearer", 

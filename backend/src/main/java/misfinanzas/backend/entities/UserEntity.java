@@ -1,7 +1,12 @@
 package misfinanzas.backend.entities;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -11,17 +16,19 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
+import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "users")
+//no se puede repetir el email en la base de datos 
+@Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = {"email"})})
 @Data
-@Getter
-@Setter
+@Builder
 
-public class UserEntity {
+public class UserEntity implements UserDetails {
 
     //Atributos
     @Id
@@ -44,5 +51,26 @@ public class UserEntity {
     //Relación de uno es a muchos con categorias para que cada usuario tenga sus propias categorias
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CategoryEntity> categories;
+
+
+
+
+
+    
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+    }
+
+    // @Override
+    // public String getUsername() {
+
+    //     throw new UnsupportedOperationException("Unimplemented method 'getUsername'");
+    // }
+
+    @Override
+    public String getUsername() {
+        return this.email; // Devuelve el email como el nombre de usuario
+    }
 }
 

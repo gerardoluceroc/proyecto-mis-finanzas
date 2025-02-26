@@ -1,6 +1,7 @@
 package misfinanzas.backend.repositories;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -21,5 +22,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     // Obtener todas las categorias guardadas por un usuario
     @Query("SELECT c FROM CategoryEntity c WHERE c.user.id = :userId")
     List<CategoryEntity> findCategoriesByUserId(@Param("userId") Long userId);
+
+    Optional<UserEntity> findByEmail(String email);
     
 } 
