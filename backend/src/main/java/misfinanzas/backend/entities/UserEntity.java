@@ -17,16 +17,22 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
+import misfinanzas.backend.dtos.Role;
 
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 //no se puede repetir el email en la base de datos 
 @Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = {"email"})})
 @Data
 @Builder
+
+//@Builder(toBuilder = true) // Esto permite que el builder no dependa solo del constructor
+
 
 public class UserEntity implements UserDetails {
 
@@ -39,6 +45,7 @@ public class UserEntity implements UserDetails {
     private String lastname;
     private String email;
     private String password;
+    private Role role;
 
     // CascadeType.ALL significa que si haces algo en UserEntity, también se aplicará automáticamente a sus categorías:
     //     Si guardas un usuario (persist), sus categorías también se guardan.
@@ -59,7 +66,7 @@ public class UserEntity implements UserDetails {
     
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+        return List.of(new SimpleGrantedAuthority(role.name()));
     }
 
     // @Override
@@ -72,5 +79,6 @@ public class UserEntity implements UserDetails {
     public String getUsername() {
         return this.email; // Devuelve el email como el nombre de usuario
     }
+
 }
 
