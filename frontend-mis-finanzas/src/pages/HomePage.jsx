@@ -4,7 +4,7 @@ import { UsersList } from '../components/UsersList'
 export default function HomePage() {
   return (
     <>
-      <UsersList/>
+      <h1>Welcomeww to the Home eeee</h1>
     </>
   )
 }
