@@ -4,20 +4,23 @@ import { useEffect, useState } from 'react';
 const TextFieldUno = ({ 
   label = "Movies",
   placeholder = "Search for movies",
-  width = "100%",
   onChange = () => {},  // Event handler for onChange event,
-  defaultValue = ""
+  defaultValue = "",
+  error = false,
+  helperText = "",
 
 }) => {
 
   return (
     <TextField
+    fullWidth
     defaultValue={defaultValue}
     label={label}
     placeholder={placeholder}
     onChange={onChange}
     variant="outlined"
-    width={width}
+    error={error}
+    helperText={helperText}
     />
 
   )
