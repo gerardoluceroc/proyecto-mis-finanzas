@@ -1,10 +1,13 @@
 package misfinanzas.backend.services;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import lombok.RequiredArgsConstructor;
 import misfinanzas.backend.dtos.AuthResponseDTO;
@@ -24,36 +27,24 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
 
     public AuthResponseDTO login(LoginRequestDTO request){
-        // System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA: "+new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
         try {
             System.out.println("Intentando autenticar usuario: " + request.getEmail());
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+            authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
+            );
             System.out.println("Autenticación exitosa");
+        } catch (BadCredentialsException e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Credenciales inválidas");
         } catch (Exception e) {
-            System.out.println("Error en la autenticación: " + e.getClass().getSimpleName() + " - " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error en la autenticación");
         }
-        
-        // authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
-        UserDetails user = userRepository.findByEmail(request.getEmail()).orElseThrow();
+
+        UserDetails user = userRepository.findByEmail(request.getEmail())
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
+
         String token = jwtService.getToken(user);
         return AuthResponseDTO.builder().token(token).build();
     }
-
-    // public AuthResponseDTO login(LoginRequestDTO request) {
-    //     try {
-    //         authenticationManager.authenticate(
-    //             new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
-    //         );
-    //     } catch (Exception e) {
-    //         throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Credenciales inválidas", e);
-    //     }
-
-    //     UserDetails user = userRepository.findByEmail(request.getEmail())
-    //                         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
-
-    //     String token = jwtService.getToken(user);
-    //     return AuthResponseDTO.builder().token(token).build();
-    // }
 
     public AuthResponseDTO register(RegisterRequestDTO request){
         UserEntity user = UserEntity.builder()
