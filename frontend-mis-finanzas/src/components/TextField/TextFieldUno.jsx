@@ -8,11 +8,14 @@ const TextFieldUno = ({
   defaultValue = "",
   error = false,
   helperText = "",
+  type = "text",
+  name = ""
 
 }) => {
 
   return (
     <TextField
+    name={name}
     fullWidth
     defaultValue={defaultValue}
     label={label}
@@ -21,6 +24,7 @@ const TextFieldUno = ({
     variant="outlined"
     error={error}
     helperText={helperText}
+    type={type}
     />
 
   )

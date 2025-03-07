@@ -5,78 +5,92 @@ import { Box, Button, Checkbox, FormControlLabel, Typography } from "@mui/materi
 import "./Login.css"
 import ValidationLogin from "./ValidationLogin";
 import ButtonTypeOne from "../Buttons/ButtonTypeOne/ButtonTypeOne";
+import useLogin from "../../hooks/useLogin";
 
 const Login = () => {
-    const [email, setEmail] = useState("");
 
-    useEffect(() => {console.log("📌  email => ",email)}, [email]);
-  
-  
-    const formik = useFormik({
-      initialValues: {
-        email:"",
-        password: ""
-      },
-      validationSchema: ValidationLogin,
-      onSubmit: async () => {
-          console.log("on submit executed");
-      }, 
-    });
-  
-    return (
-      <Box id="ContainerLogin">
-        <Box id="BoxLogin">
-          <Box id="HeaderLogin">
-            <Typography variant="h4">Inicia sesión</Typography>
-            <Typography variant="h6" color="gray">Ingresa tus datos para iniciar sesión</Typography>
-          </Box>
+  const {response, loading, loginSession} = useLogin();
 
-          <Box id="CredentialsLogin">
-            <TextFieldUno
-              label="Correo electrónico"
-              name="email"
-              type="email"
-              value={formik.values.email}
-              onChange={formik.handleChange}
-              error={formik.touched.email && Boolean(formik.errors.email)}
-              helperText={formik.touched.email && formik.errors.email}
-            />
 
-            <TextFieldUno
-              label="Contraseña"
-              name="password"
-              type="password"
-              value={formik.values.password}
-              onChange={formik.handleChange}
-              error={formik.touched.password && Boolean(formik.errors.password)}
-              helperText={formik.touched.password && formik.errors.password}
-            />
+  const formik = useFormik({
+    initialValues: {
+      email:"",
+      password: ""
+    },
+    validationSchema: ValidationLogin,
+    onSubmit: async () => {
 
-            <FormControlLabel control={<Checkbox defaultChecked />} label="Recuerdame" sx={{marginLeft: "5px"}} />
+      const token = await loginSession({email: formik.values.email, password: formik.values.password});
+      console.log("🚀 ~ onSubmit: ~ token:", token)
+      
+      if (token) {
+        console.log("Login exitoso, token:", token);
+        // Aquí puedes almacenar el token en localStorage o gestionarlo según lo necesites
+      } else {
+        console.error("Error al iniciar sesión", error);
+      }
+        
+    }, 
+  });
+  useEffect(() => {console.log("📌 formik values => ",formik.values)}, [formik.values]);
 
-          </Box>
 
-        <Box id="BoxLoginButton">
-          <ButtonTypeOne
-          text="Iniciar sesión"
-          handleClick={formik.handleSubmit}
+  return (
+    <Box id="ContainerLogin">
+      <Box id="BoxLogin">
+        <Box id="HeaderLogin">
+          <Typography variant="h4">Inicia sesión</Typography>
+          <Typography variant="h6" color="gray">Ingresa tus datos para iniciar sesión</Typography>
+        </Box>
+
+        <Box id="CredentialsLogin">
+          <TextFieldUno
+            label="Correo electrónico"
+            placeholder="ejemplo@ejemplo.com"
+            name="email"
+            type="email"
+            value={formik.values.email}
+            onChange={formik.handleChange}
+            error={formik.touched.email && Boolean(formik.errors.email)}
+            helperText={formik.touched.email && formik.errors.email}
           />
+
+          <TextFieldUno
+            label="Contraseña"
+            placeholder=""
+            name="password"
+            type="password"
+            value={formik.values.password}
+            onChange={formik.handleChange}
+            error={formik.touched.password && Boolean(formik.errors.password)}
+            helperText={formik.touched.password && formik.errors.password}
+          />
+
+          <FormControlLabel control={<Checkbox defaultChecked />} label="Recuerdame" sx={{marginLeft: "5px", marginTop: "-15px"}} />
+
         </Box>
 
-          
-        </Box>
-
+      <Box id="BoxLoginButton">
+        <ButtonTypeOne
+        text="Iniciar sesión"
+        handleClick={formik.handleSubmit}
+        />
       </Box>
-      // <>
-      // {/* <h1>Hola amigos</h1> */}
-      // <TextFieldUno
-      // label="Correo electrónico"
-      // placeholder="ejemplo@ejemplo.com"
-      // onChange={(e)=> setEmail(e.target.value)}
-      // />
-      // <h1>hola</h1>
-      // </>
-    )
+
+        
+      </Box>
+
+    </Box>
+    // <>
+    // {/* <h1>Hola amigos</h1> */}
+    // <TextFieldUno
+    // label="Correo electrónico"
+    // placeholder="ejemplo@ejemplo.com"
+    // onChange={(e)=> setEmail(e.target.value)}
+    // />
+    // <h1>hola</h1>
+    // </>
+  )
 }
 
 export default Login;
