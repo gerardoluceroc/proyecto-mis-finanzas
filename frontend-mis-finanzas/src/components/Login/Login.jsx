@@ -39,7 +39,7 @@ const Login = () => {
     <Box id="ContainerLogin">
       <Box id="BoxLogin">
         <Box id="HeaderLogin">
-          <Typography variant="h4">Inicia sesión</Typography>
+          <Typography variant="h4">Iniciar sesión</Typography>
           <Typography variant="h6" color="gray">Ingresa tus datos para iniciar sesión</Typography>
         </Box>
 
