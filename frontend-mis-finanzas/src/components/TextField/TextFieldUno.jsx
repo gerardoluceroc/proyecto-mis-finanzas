@@ -1,5 +1,4 @@
 import { TextField, InputAdornment, IconButton } from "@mui/material";
-import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { useEffect, useState } from "react";

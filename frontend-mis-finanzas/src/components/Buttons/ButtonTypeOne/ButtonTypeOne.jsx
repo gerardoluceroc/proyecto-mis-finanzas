@@ -13,6 +13,8 @@ const ButtonTypeOne = ({
     lineHeight = "24px",
     letterSpacing = "0.15px",
     textTransform = "none",
+    loading = false,
+    loadingPosition = "end"
 }) => {
   return (
     <Button
@@ -20,6 +22,8 @@ const ButtonTypeOne = ({
         fullWidth
         // type="submit"
         onClick={handleClick}
+        loading={loading}
+        loadingPosition={loadingPosition}
         sx={{
         borderRadius: '100px',
         boxShadow: '0px 1px 3px 1px rgba(0, 0, 0, 0.15), 0px 1px 2px 0px rgba(0, 0, 0, 0.30)',

@@ -9,30 +9,48 @@ import useLogin from "../../hooks/useLogin";
 
 const Login = () => {
 
-  const {response, loading, loginSession} = useLogin();
+  const {response, loading, loginSession, responseStatus} = useLogin();
 
+  const [cargando, setCargando] = useState(false);
 
   const formik = useFormik({
     initialValues: {
-      email:"",
+      email: "",
       password: ""
     },
     validationSchema: ValidationLogin,
     onSubmit: async () => {
-
-      const token = await loginSession({email: formik.values.email, password: formik.values.password});
-      console.log("🚀 ~ onSubmit: ~ token:", token)
-      
-      if (token) {
-        console.log("Login exitoso, token:", token);
-        // Aquí puedes almacenar el token en localStorage o gestionarlo según lo necesites
-      } else {
-        console.error("Error al iniciar sesión", error);
+      try {
+        const token = await loginSession({ email: formik.values.email, password: formik.values.password });
+        if (token) {
+          console.log("Login exitoso, token:", token);
+        } else {
+          console.error("Error al iniciar sesión: credenciales incorrectas o error en el servidor");
+        }
+      } catch (error) {
+        // Este bloque se ejecutará si ocurre un error durante la llamada asíncrona
+        console.error("Error al iniciar sesión:", error);
       }
-        
-    }, 
+    }
   });
-  useEffect(() => {console.log("📌 formik values => ",formik.values)}, [formik.values]);
+  
+  // useEffect(() => {
+  //   console.log("📌 formik values => ", formik.values);
+  // }, [formik.values]);
+
+  useEffect(() => {
+    console.log("📌 formik errors => ", formik.errors);
+  }, [formik.errors]);
+
+  useEffect(() => {
+    console.log("response status ha cambiado");
+    if(responseStatus === 401){
+      formik.setFieldError('email', "Correo o contraseña incorrecto(s)");
+      formik.setFieldError('password', "Correo y/o contraseña incorrecto(s)");
+    }
+  }, [responseStatus])
+  
+  
 
 
   return (
@@ -70,26 +88,16 @@ const Login = () => {
 
         </Box>
 
-      <Box id="BoxLoginButton">
-        <ButtonTypeOne
-        text="Iniciar sesión"
-        handleClick={formik.handleSubmit}
-        />
-      </Box>
-
-        
+        <Box id="BoxLoginButton">
+          <ButtonTypeOne
+          text="Iniciar sesión"
+          handleClick={formik.handleSubmit}
+          loading={loading}
+          />
+        </Box>
       </Box>
 
     </Box>
-    // <>
-    // {/* <h1>Hola amigos</h1> */}
-    // <TextFieldUno
-    // label="Correo electrónico"
-    // placeholder="ejemplo@ejemplo.com"
-    // onChange={(e)=> setEmail(e.target.value)}
-    // />
-    // <h1>hola</h1>
-    // </>
   )
 }
 

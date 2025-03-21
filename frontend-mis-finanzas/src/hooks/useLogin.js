@@ -23,12 +23,13 @@ const useLogin = () => {
       setResponseStatus(status);
       return token; 
       
-    } catch (response) {
+    } catch ({response}) {
+        console.log("response es: ", response)
         const error = response?.data.error;
         const status = response?.status;
         setResponse(error);
         setResponseStatus(status);
-        return response.data.error
+        return null
         
     } finally {
         setLoading(false);  // Indicamos que la petición terminó, independientemente de si tuvo éxito o no
@@ -38,7 +39,8 @@ const useLogin = () => {
   return {
     loading,
     response,
-    loginSession,  // Debes retornar la función para que el componente pueda usarla
+    loginSession,
+    responseStatus
   };
 };
 
