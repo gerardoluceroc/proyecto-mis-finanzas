@@ -16,25 +16,29 @@ const useLogin = () => {
 
     setLoading(true);  // Indicamos que la petición está en proceso
     try {
-      const response = await axios.post(url_loginSession, body);  // Realizas la petición POST
-      const token = response?.data.token;
-      const status = response?.status;
-      setResponse(token);
-      setResponseStatus(status);
-      return token; 
-      
-    } catch ({response}) {
-        console.log("response es: ", response)
-        const error = response?.data.error;
-        const status = response?.status;
-        setResponse(error);
+      const response = await axios.post(url_loginSession, body);  // Realizas la petición POST      
+      const token = response?.data?.token || null;  // Asegurarse que token no sea undefined
+      const status = response?.status || null;  // Asegurarse que status no sea undefined
+
+      if (token) {
+        setResponse(token);
         setResponseStatus(status);
-        return null
-        
+        return { token, status }; 
+      } else {
+        throw new Error("Token no disponible");
+      }
+
+    } catch (error) {
+        const errorMessage = error?.response?.data?.error || "Error desconocido";  // Manejo de errores
+        const status = error?.response?.status || null;
+        setResponse(errorMessage);
+        setResponseStatus(status);
+        return null;
     } finally {
         setLoading(false);  // Indicamos que la petición terminó, independientemente de si tuvo éxito o no
     }
-  };
+};
+
 
   return {
     loading,

@@ -21,37 +21,26 @@ const Login = () => {
     validationSchema: ValidationLogin,
     onSubmit: async () => {
       try {
-        const token = await loginSession({ email: formik.values.email, password: formik.values.password });
-        if (token) {
-          console.log("Login exitoso, token:", token);
+        const result = await loginSession({ email: formik.values.email, password: formik.values.password });
+        if (result) {
+          const { token, status } = result;
+          if (token) {
+            console.log("Login exitoso");
+          } else {
+            formik.setFieldError('email', "Error al iniciar sesión");
+            formik.setFieldError('password', "Error al iniciar sesión");
+          }
         } else {
-          console.error("Error al iniciar sesión: credenciales incorrectas o error en el servidor");
+          console.error("Error al intentar iniciar sesión: Correo y/o contraseña incorrecto(s)");
+          formik.setFieldError('email', "Correo y/o contraseña incorrecto(s)");
+          formik.setFieldError('password', "Correo y/o contraseña incorrecto(s)");
         }
       } catch (error) {
-        // Este bloque se ejecutará si ocurre un error durante la llamada asíncrona
-        console.error("Error al iniciar sesión:", error);
+        formik.setFieldError('email', "Hubo un error al intentar iniciar sesión");
+        formik.setFieldError('password', "Hubo un error al intentar iniciar sesión");
       }
     }
   });
-  
-  // useEffect(() => {
-  //   console.log("📌 formik values => ", formik.values);
-  // }, [formik.values]);
-
-  useEffect(() => {
-    console.log("📌 formik errors => ", formik.errors);
-  }, [formik.errors]);
-
-  useEffect(() => {
-    console.log("response status ha cambiado");
-    if(responseStatus === 401){
-      formik.setFieldError('email', "Correo o contraseña incorrecto(s)");
-      formik.setFieldError('password', "Correo y/o contraseña incorrecto(s)");
-    }
-  }, [responseStatus])
-  
-  
-
 
   return (
     <Box id="ContainerLogin">
@@ -93,6 +82,8 @@ const Login = () => {
           text="Iniciar sesión"
           handleClick={formik.handleSubmit}
           loading={loading}
+          backgroundColor="#2ecc71"
+          backgroundColorHover=" #239b56 "
           />
         </Box>
       </Box>
