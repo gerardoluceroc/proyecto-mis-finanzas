@@ -23,6 +23,10 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     @Query("SELECT c FROM CategoryEntity c WHERE c.user.id = :userId")
     List<CategoryEntity> findCategoriesByUserId(@Param("userId") Long userId);
 
+    // Encontrar un usuario por su correo electrónico
     Optional<UserEntity> findByEmail(String email);
+
+    // Verificar si existe un usuario con el correo electrónico especificado
+    boolean existsByEmail(String email);  // Este es el método que agregamos
     
 } 

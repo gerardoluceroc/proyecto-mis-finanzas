@@ -1,5 +1,7 @@
 package misfinanzas.backend.services;
 
+import java.util.Optional;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -15,6 +17,7 @@ import misfinanzas.backend.dtos.LoginRequestDTO;
 import misfinanzas.backend.dtos.RegisterRequestDTO;
 import misfinanzas.backend.dtos.Role;
 import misfinanzas.backend.entities.UserEntity;
+import misfinanzas.backend.errors.UserAlreadyExistsException;
 import misfinanzas.backend.repositories.UserRepository;
 
 @Service
@@ -28,7 +31,7 @@ public class AuthService {
 
     public AuthResponseDTO login(LoginRequestDTO request){
         try {
-            System.out.println("Intentando autenticar usuario: " + request.getEmail());
+            // System.out.println("Intentando autenticar usuario: " + request.getEmail());
             authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
             );
@@ -46,18 +49,30 @@ public class AuthService {
         return AuthResponseDTO.builder().token(token).build();
     }
 
-    public AuthResponseDTO register(RegisterRequestDTO request){
+    public AuthResponseDTO register(RegisterRequestDTO request) {
+        // Verificar si el usuario ya existe usando findByEmail
+        Optional<UserEntity> existingUser = userRepository.findByEmail(request.getEmail());
+        
+        if (existingUser.isPresent()) {
+            // Si el usuario ya existe, lanzar la excepción
+            throw new UserAlreadyExistsException("El usuario ya existe");
+        }
+    
+        // Si no existe, proceder con la creación del nuevo usuario
         UserEntity user = UserEntity.builder()
-                            .name(request.getName())
-                            .lastname(request.getLastname())
-                            .email(request.getEmail())
-                            .password(passwordEncoder.encode(request.getPassword()))
-                            .role(Role.USER)
-                            .build();
-
-        userRepository.save(user);
+                .name(request.getName())
+                .lastname(request.getLastname())
+                .email(request.getEmail())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .role(Role.USER)
+                .build();
+    
+        userRepository.save(user);  // Guardamos al nuevo usuario
+    
+        // Crear y devolver el token de autenticación
         return AuthResponseDTO.builder()
-                    .token(jwtService.getToken(user))
-                    .build();
+                .token(jwtService.getToken(user))
+                .build();
     }
+    
 }
