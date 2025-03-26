@@ -12,6 +12,7 @@ const TextFieldUno = ({
   helperText = "",
   type = "text",
   name = "",
+  width = "100%",
 }) => {
 
   const [textfieldType, setTextfieldType] = useState(type);
@@ -48,6 +49,7 @@ const TextFieldUno = ({
     <TextField
       name={name}
       fullWidth
+      sx={{width: width}}
       defaultValue={defaultValue}
       label={label}
       placeholder={placeholder}

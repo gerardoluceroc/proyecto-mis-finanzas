@@ -26,7 +26,7 @@ const Login = () => {
           const { token, status } = result;
           if (token) {
             console.log("Login exitoso");
-          } else {
+          } else if (status === 401) {
             formik.setFieldError('email', "Error al iniciar sesión");
             formik.setFieldError('password', "Error al iniciar sesión");
           }
