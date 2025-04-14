@@ -78,13 +78,14 @@ const Login = () => {
         </Box>
 
         <Box id="BoxLoginButton">
-          <ButtonTypeOne
-          text="Iniciar sesión"
+        <ButtonTypeOne
+          defaultText="Iniciar sesión"
+          loadingText="Iniciando sesión..."
           handleClick={formik.handleSubmit}
           loading={loading}
           backgroundColor="#2ecc71"
-          backgroundColorHover=" #239b56 "
-          />
+          backgroundColorHover="#239b56"
+        />
         </Box>
       </Box>
 
